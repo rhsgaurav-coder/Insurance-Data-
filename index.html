@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Insurance Portal – Reliable HR Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --navy:#0a1628;
+  --navy2:#0d1e38;
+  --navy3:#0f2548;
+  --gold:#c9a84c;
+  --gold2:#f0d080;
+  --gold3:#e8c460;
+  --white:#ffffff;
+  --muted:#8899bb;
+  --border:rgba(201,168,76,0.25);
+  --border2:rgba(255,255,255,0.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;color:var(--white);}
+body::before{content:'';position:fixed;inset:0;background:
+  radial-gradient(ellipse 70% 50% at 20% 10%,rgba(14,40,90,0.95) 0%,transparent 65%),
+  radial-gradient(ellipse 60% 50% at 80% 90%,rgba(10,28,60,0.9) 0%,transparent 60%),
+  radial-gradient(ellipse 40% 40% at 50% 50%,rgba(201,168,76,0.05) 0%,transparent 70%);
+  pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(201,168,76,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(201,168,76,0.03) 1px,transparent 1px);
+  background-size:60px 60px;pointer-events:none;z-index:0;}
+
+.page{position:relative;z-index:1;}
+.wrap{max-width:1000px;margin:0 auto;padding:0 22px 80px;}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 8px rgba(201,168,76,0.7);}50%{opacity:0.5;box-shadow:0 0 16px rgba(201,168,76,0.3);}}
+@keyframes shimmer{0%{background-position:200% center;}100%{background-position:-200% center;}}
+@keyframes glow{0%,100%{text-shadow:0 0 20px rgba(201,168,76,0.4);}50%{text-shadow:0 0 40px rgba(201,168,76,0.7);}}
+
+.fade1{animation:fadeUp .5s ease both;}
+.fade2{animation:fadeUp .5s .1s ease both;}
+.fade3{animation:fadeUp .5s .2s ease both;}
+.fade4{animation:fadeUp .5s .3s ease both;}
+.fade5{animation:fadeUp .5s .4s ease both;}
+
+/* ── NAVBAR ── */
+.rhs-nav{position:sticky;top:0;z-index:200;background:rgba(10,22,40,0.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,168,76,0.18);padding:0 22px;}
+.rhs-nav-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.rhs-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.rhs-logomark{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold) 0%,#a8792a 100%);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--navy);flex-shrink:0;box-shadow:0 4px 16px rgba(201,168,76,0.4);font-family:'Cormorant Garamond',serif;letter-spacing:-0.5px;}
+.rhs-logotype-main{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--white);letter-spacing:0.3px;line-height:1;}
+.rhs-logotype-sub{font-size:9px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);margin-top:2px;}
+.rhs-nav-right{display:flex;align-items:center;gap:10px;}
+.rhs-nav-tag{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:5px 14px;}
+.rhs-nav-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.8);animation:pulse 2s ease-in-out infinite;}
+.nav-tabs{display:flex;gap:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:3px;}
+.nav-tab{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:6px 14px;border-radius:7px;cursor:pointer;transition:all .2s;letter-spacing:0.3px;}
+.nav-tab.active{background:linear-gradient(135deg,rgba(201,168,76,0.25),rgba(201,168,76,0.1));color:var(--gold3);border:1px solid rgba(201,168,76,0.3);}
+.nav-tab:hover:not(.active){color:var(--white);}
+
+/* ── SECTION PANELS ── */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:60px 40px 50px;border-radius:28px;border:1px solid var(--border);
+  background:linear-gradient(160deg,rgba(255,255,255,0.07) 0%,rgba(255,255,255,0.02) 100%);
+  backdrop-filter:blur(10px);margin:28px 0;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:400px;height:160px;
+  background:radial-gradient(ellipse,rgba(201,168,76,0.18) 0%,transparent 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,0.4),transparent);}
+.powered-strip{display:inline-flex;align-items:center;gap:8px;background:rgba(10,22,40,0.6);border:1px solid rgba(201,168,76,0.25);
+  border-radius:50px;padding:6px 16px 6px 8px;margin-bottom:20px;}
+.powered-avatar{width:24px;height:24px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#a8792a);
+  display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:11px;font-weight:900;color:var(--navy);}
+.powered-text{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.powered-text strong{color:var(--gold3);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.12);
+  border:1px solid rgba(201,168,76,0.35);border-radius:50px;padding:7px 20px;
+  font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold3);margin-bottom:22px;}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(34px,6vw,56px);font-weight:700;color:var(--white);line-height:1.1;margin-bottom:10px;}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));background-size:200% auto;
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 4s linear infinite;}
+.hero-sub{font-size:13px;color:var(--muted);font-weight:400;letter-spacing:0.5px;margin-bottom:20px;}
+.divider{width:70px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:20px auto;}
+.hero-msg{font-size:15px;color:rgba(255,255,255,0.72);line-height:1.9;max-width:580px;margin:0 auto;}
+.hero-msg strong{color:var(--gold3);font-weight:600;}
+
+/* ── CARDS ── */
+.card{border-radius:22px;border:1px solid var(--border);
+  background:linear-gradient(145deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.015) 100%);
+  backdrop-filter:blur(8px);padding:30px 32px;margin-bottom:20px;}
+.card-header{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+.icon-box{width:46px;height:46px;border-radius:13px;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.28);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:700;color:var(--white);}
+.card-sub{font-size:12px;color:var(--muted);margin-top:2px;letter-spacing:0.3px;}
+
+/* Info boxes */
+.info-box{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.22);border-radius:14px;
+  padding:16px 20px;font-size:14px;color:rgba(255,255,255,0.78);line-height:1.75;margin-bottom:14px;}
+.info-box strong{color:var(--gold3);}
+.info-box:last-child{margin-bottom:0;}
+
+/* ── PREMIUM CHART TABLE ── */
+.chart-section-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold3);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.chart-section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,0.3),transparent);}
+.tbl-wrap{overflow-x:auto;border-radius:16px;border:1px solid rgba(201,168,76,0.2);}
+table{width:100%;border-collapse:collapse;min-width:700px;}
+thead tr{background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.06));}
+th{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold3);
+  padding:13px 14px;text-align:right;white-space:nowrap;border-bottom:1px solid rgba(201,168,76,0.2);}
+th:first-child{text-align:left;}
+td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.05);color:rgba(255,255,255,0.82);
+  text-align:right;font-variant-numeric:tabular-nums;font-size:13px;}
+td:first-child{text-align:left;font-weight:600;color:var(--white);}
+tr:last-child td{border-bottom:none;}
+tr.chart-row:hover td{background:rgba(201,168,76,0.05);}
+.si-label{font-weight:700;color:var(--gold3);font-size:13px;}
+.bracket-head{font-size:9.5px !important;letter-spacing:0.5px !important;}
+.gst-note{font-size:11px;color:var(--muted);margin-top:10px;text-align:right;}
+
+/* ── CALCULATOR ── */
+.form-grid{display:grid;grid-template-columns:1fr 90px 170px auto;gap:12px;align-items:end;margin-bottom:10px;}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.field input,.field select{width:100%;height:42px;padding:0 14px;border-radius:11px;
+  border:1px solid rgba(201,168,76,0.25);background:rgba(255,255,255,0.05);
+  color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .2s,background .2s;}
+.field input::placeholder{color:rgba(255,255,255,0.22);}
+.field input:focus,.field select:focus{border-color:rgba(201,168,76,0.65);background:rgba(201,168,76,0.06);}
+.field select option{background:#0f2040;color:var(--white);}
+.btn-add{height:42px;padding:0 22px;border-radius:11px;
+  background:linear-gradient(135deg,var(--gold) 0%,#a8792a 100%);
+  color:var(--navy);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;
+  border:none;cursor:pointer;white-space:nowrap;transition:all .25s;
+  box-shadow:0 4px 16px rgba(201,168,76,0.3);}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(201,168,76,0.45);}
+.form-hint{font-size:12px;color:var(--muted);margin-bottom:22px;}
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.metric-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:15px 16px;}
+.metric-card.highlight{background:rgba(201,168,76,0.09);border-color:rgba(201,168,76,0.3);}
+.metric-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.metric-value{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--white);line-height:1;}
+.metric-card.highlight .metric-value{color:var(--gold3);}
+.metric-sub{font-size:11px;color:var(--muted);margin-top:5px;}
+.bracket-banner{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  background:rgba(201,168,76,0.09);border:1px solid rgba(201,168,76,0.28);
+  border-radius:11px;padding:11px 16px;margin-bottom:18px;font-size:13px;color:rgba(255,255,255,0.8);}
+.bracket-pill{background:rgba(201,168,76,0.2);border:1px solid rgba(201,168,76,0.4);
+  border-radius:20px;padding:3px 14px;font-size:12px;font-weight:700;color:var(--gold3);white-space:nowrap;}
+.btn-rm{background:rgba(255,80,80,0.1);border:1px solid rgba(255,80,80,0.25);border-radius:7px;
+  padding:4px 10px;font-size:11px;font-weight:600;color:rgba(255,120,120,0.9);cursor:pointer;transition:all .2s;}
+.btn-rm:hover{background:rgba(255,80,80,0.22);border-color:rgba(255,100,100,0.5);}
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.6;}
+.oldest-star{font-size:10px;color:var(--gold3);margin-left:5px;vertical-align:middle;}
+.age-badge{display:inline-block;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.28);
+  border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;color:var(--gold3);}
+.gst-val{color:rgba(240,208,128,0.7);}
+.total-val{color:var(--white);font-weight:600;}
+.total-row td{background:rgba(201,168,76,0.08) !important;border-top:1px solid rgba(201,168,76,0.25);
+  color:var(--gold3);font-weight:600;}
+.total-row .grand{color:var(--gold2);font-size:14px;font-weight:700;}
+.data-row:hover td{background:rgba(201,168,76,0.04);}
+.num-cell{text-align:right;}
+
+/* ── MEMBERS DIRECTORY ── */
+.search-bar{display:flex;gap:10px;margin-bottom:20px;}
+.search-bar input{flex:1;height:42px;padding:0 16px;border-radius:11px;
+  border:1px solid rgba(201,168,76,0.2);background:rgba(255,255,255,0.05);
+  color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:all .2s;}
+.search-bar input:focus{border-color:rgba(201,168,76,0.6);background:rgba(201,168,76,0.05);}
+.search-bar input::placeholder{color:rgba(255,255,255,0.25);}
+.search-bar select{height:42px;padding:0 14px;border-radius:11px;
+  border:1px solid rgba(201,168,76,0.2);background:rgba(255,255,255,0.05);
+  color:var(--white);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:180px;}
+.search-bar select option{background:#0f2040;}
+.member-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.member-card{background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.15);
+  border-radius:18px;padding:20px;cursor:pointer;transition:all .22s;}
+.member-card:hover{background:rgba(201,168,76,0.07);border-color:rgba(201,168,76,0.35);transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,0.12);}
+.m-avatar{width:46px;height:46px;border-radius:14px;
+  background:linear-gradient(135deg,var(--gold),#a8792a);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:900;color:var(--navy);flex-shrink:0;}
+.m-name{font-size:15px;font-weight:600;color:var(--white);}
+.m-meta{font-size:12px;color:var(--muted);margin-top:2px;}
+.m-rhs{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gold3);margin-top:6px;}
+.m-status{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;
+  letter-spacing:0.5px;text-transform:uppercase;}
+.status-active{background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);}
+.status-inactive{background:rgba(239,68,68,0.12);color:#f87171;border:1px solid rgba(239,68,68,0.25);}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(5,12,28,0.85);
+  backdrop-filter:blur(14px);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:#0d1e38;border:1px solid rgba(201,168,76,0.25);border-radius:24px;
+  max-width:640px;width:100%;max-height:90vh;overflow-y:auto;}
+.modal-head{background:linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.06));
+  padding:26px 28px 22px;border-radius:24px 24px 0 0;border-bottom:1px solid rgba(201,168,76,0.18);position:relative;}
+.modal-close{position:absolute;top:18px;right:18px;background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);border-radius:8px;width:32px;height:32px;
+  color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.modal-close:hover{background:rgba(255,80,80,0.15);color:#f87171;border-color:rgba(255,80,80,0.3);}
+.modal-body{padding:26px 28px;}
+.detail-section{margin-bottom:22px;}
+.detail-section-title{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold3);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.detail-section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,0.3),transparent);}
+.detail-rows{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:13px;overflow:hidden;}
+.detail-row{display:flex;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,0.05);}
+.detail-row:last-child{border-bottom:none;}
+.detail-key{font-size:13px;color:var(--muted);width:150px;flex-shrink:0;}
+.detail-val{font-size:13px;color:rgba(255,255,255,0.9);font-weight:500;flex:1;}
+.members-list{margin-top:8px;display:flex;flex-direction:column;gap:6px;}
+.member-pill{display:flex;align-items:center;gap:8px;background:rgba(201,168,76,0.07);
+  border:1px solid rgba(201,168,76,0.18);border-radius:9px;padding:8px 14px;font-size:13px;color:rgba(255,255,255,0.8);}
+.member-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;}
+
+/* ── FOOTER ── */
+.footer{border-radius:24px;border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(201,168,76,0.09) 0%,rgba(255,255,255,0.02) 100%);
+  padding:36px 36px 28px;text-align:center;margin-top:10px;position:relative;overflow:hidden;}
+.footer::before{content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);
+  width:300px;height:80px;background:radial-gradient(ellipse,rgba(201,168,76,0.1) 0%,transparent 70%);pointer-events:none;}
+.footer-brand{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:18px;}
+.footer-logomark{width:54px;height:54px;border-radius:16px;
+  background:linear-gradient(135deg,var(--gold) 0%,#a8792a 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:900;color:var(--navy);
+  box-shadow:0 6px 24px rgba(201,168,76,0.35);}
+.footer-company{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--white);line-height:1;}
+.footer-company em{font-style:normal;background:linear-gradient(90deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-dept{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold3);margin-top:3px;}
+.footer-divider{width:90px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto;}
+.footer-name{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--white);
+  margin-bottom:4px;animation:glow 3s ease-in-out infinite;}
+.footer-role{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold3);font-weight:600;margin-bottom:18px;}
+.footer-contacts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.contact-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);border-radius:50px;padding:6px 16px;
+  font-size:12px;color:rgba(255,255,255,0.75);text-decoration:none;transition:all .2s;}
+.contact-pill:hover{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.35);color:var(--gold3);}
+.tagline{font-family:'Cormorant Garamond',serif;font-size:18px;font-style:italic;color:var(--gold3);opacity:.9;margin-bottom:14px;}
+.design-credit{font-size:11px;color:rgba(255,255,255,0.28);letter-spacing:0.4px;}
+.design-credit strong{color:rgba(201,168,76,0.5);}
+
+/* ── UPLOAD PANEL ── */
+.upload-panel{background:rgba(255,255,255,0.03);border:1px solid rgba(201,168,76,0.2);
+  border-radius:16px;padding:20px;margin-bottom:18px;}
+.upload-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.upload-panel-title{font-size:13px;font-weight:700;color:var(--white);display:flex;align-items:center;gap:8px;}
+.sync-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;
+  letter-spacing:0.8px;padding:3px 10px;border-radius:20px;text-transform:uppercase;}
+.sync-badge.idle{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid rgba(255,255,255,0.1);}
+.sync-badge.saving{background:rgba(201,168,76,0.12);color:var(--gold3);border:1px solid rgba(201,168,76,0.25);}
+.sync-badge.synced{background:rgba(52,211,153,0.12);color:#34d399;border:1px solid rgba(52,211,153,0.25);}
+.sync-badge.error{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.sync-dot.pulse{animation:pulse 1.2s infinite;}
+.file-slots{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.file-slot{background:rgba(255,255,255,0.03);border:1.5px dashed rgba(201,168,76,0.25);
+  border-radius:12px;padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;}
+.file-slot:hover{border-color:rgba(201,168,76,0.55);background:rgba(201,168,76,0.05);}
+.file-slot.loaded{border-style:solid;border-color:rgba(52,211,153,0.45);background:rgba(52,211,153,0.05);}
+.file-slot-icon{font-size:22px;display:block;margin-bottom:8px;}
+.file-slot-name{font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);display:block;}
+.file-slot.loaded .file-slot-name{color:#34d399;}
+.file-slot-hint{font-size:10px;color:var(--muted);display:block;margin-top:3px;}
+.btn-upload{width:100%;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold) 0%,#a8792a 100%);
+  color:var(--navy);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;
+  border:none;cursor:pointer;letter-spacing:0.3px;
+  box-shadow:0 4px 18px rgba(201,168,76,0.28);transition:all .25s;}
+.btn-upload:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,0.42);}
+.btn-upload:disabled{opacity:.45;cursor:not-allowed;transform:none;}
+.upload-msg{font-size:11.5px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.6;}
+.upload-msg.ok{color:#34d399;} .upload-msg.err{color:#f87171;} .upload-msg.saving{color:var(--gold3);}
+#xlIns,#xlEmp{display:none;}
+/* ── RESPONSIVE ── */
+@media(max-width:720px){
+  .form-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;}
+  .btn-add{grid-column:1/-1;}
+  .metrics-row{grid-template-columns:1fr 1fr;}
+  .member-grid{grid-template-columns:1fr;}
+  .hero{padding:38px 20px 34px;}
+  .card{padding:22px 18px;}
+  .wrap{padding:0 14px 60px;}
+  .nav-tabs{display:none;}
+  .footer{padding:26px 18px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="rhs-nav">
+  <div class="rhs-nav-inner">
+    <a class="rhs-logo" href="#">
+      <div class="rhs-logomark">RHS</div>
+      <div>
+        <div class="rhs-logotype-main">Reliable HR Solutions</div>
+        <div class="rhs-logotype-sub">Employee Benefits Portal</div>
+      </div>
+    </a>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showPanel('calculator')">🧮 Calculator</button>
+        <button class="nav-tab" onclick="showPanel('chart')">📊 Rate Chart</button>
+        <button class="nav-tab" onclick="showPanel('members')">👥 Members</button>
+      </div>
+      <div class="rhs-nav-right">
+        <div class="rhs-nav-dot"></div>
+        <span class="rhs-nav-tag">Insurance Portal</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="wrap">
+
+    <!-- HERO -->
+    <div class="hero fade1">
+      <div class="powered-strip">
+        <div class="powered-avatar">RHS</div>
+        <span class="powered-text">Powered by <strong>Reliable HR Solutions</strong></span>
+      </div>
+      <div class="hero-badge"><span>✦</span> Bajaj Allianz · Group Health Policy <span>✦</span></div>
+      <h1>Group Health<br><em>Insurance Portal</em></h1>
+      <p class="hero-sub">Policy No. OG-26-2025-8403-00000044 · Bajaj Allianz General Insurance Co. Ltd.</p>
+      <div class="divider"></div>
+      <p class="hero-msg">
+        Calculate <strong>exact premiums</strong> per employee, view the full
+        <strong>rate chart</strong>, and access all <strong>insured member details</strong>.
+        Group insurance uses the <strong>oldest member's age bracket</strong> as the rating basis.
+      </p>
+    </div>
+
+    <!-- MOBILE TAB PILLS -->
+    <div style="display:none;" id="mob-tabs">
+      <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;">
+        <button class="nav-tab active" style="white-space:nowrap;background:rgba(201,168,76,0.18);color:var(--gold3);border:1px solid rgba(201,168,76,0.3);" onclick="showPanel('calculator')">🧮 Calculator</button>
+        <button class="nav-tab" style="white-space:nowrap;" onclick="showPanel('chart')">📊 Rate Chart</button>
+        <button class="nav-tab" style="white-space:nowrap;" onclick="showPanel('members')">👥 Members</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ PANEL: CALCULATOR ══════════════════════════════ -->
+    <div id="panel-calculator" class="panel active fade2">
+
+      <!-- Policy Info -->
+      <div class="card fade3">
+        <div class="card-header">
+          <div class="icon-box">ℹ️</div>
+          <div>
+            <div class="card-title">Policy Information</div>
+            <div class="card-sub">Bajaj Allianz Group Mediclaim</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <strong>Insurer:</strong> Bajaj Allianz General Insurance Co. Ltd. &nbsp;·&nbsp;
+          <strong>Policy No.:</strong> OG-26-2025-8403-00000044<br>
+          <strong>Premium Type:</strong> Per Person &nbsp;·&nbsp;
+          <strong>GST:</strong> 18% applicable on base premium
+        </div>
+        <div class="info-box" style="margin-bottom:0;">
+          🏢 <strong>Group Rating Rule:</strong> In group mediclaim, <strong>all members are rated using the oldest member's age bracket</strong>
+          — regardless of their individual age. Add all members below and the system applies the correct bracket automatically.
+        </div>
+      </div>
+
+      <!-- Calculator -->
+      <div class="card fade4">
+        <div class="card-header">
+          <div class="icon-box">🧮</div>
+          <div>
+            <div class="card-title">Premium Calculator</div>
+            <div class="card-sub">Add employees to compute exact premium</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="field">
+            <label>Employee Name</label>
+            <input type="text" id="iName" placeholder="e.g. Rahul Sharma"/>
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <input type="number" id="iAge" min="0" max="120" placeholder="Age"/>
+          </div>
+          <div class="field">
+            <label>Sum Insured (₹)</label>
+            <select id="iSI">
+              <option value="100000">₹1,00,000</option>
+              <option value="150000">₹1,50,000</option>
+              <option value="300000" selected>₹3,00,000</option>
+              <option value="500000">₹5,00,000</option>
+              <option value="1000000">₹10,00,000</option>
+            </select>
+          </div>
+          <button class="btn-add" onclick="addMember()">+ Add Member</button>
+        </div>
+        <p class="form-hint">Press Enter after filling name / age to add quickly. Use × to remove a member.</p>
+        <div id="results"></div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ PANEL: RATE CHART ══════════════════════════════ -->
+    <div id="panel-chart" class="panel fade2">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon-box">📊</div>
+          <div>
+            <div class="card-title">Base Premium Rate Chart</div>
+            <div class="card-sub">Bajaj Allianz · All Age Brackets · Per Person · Excluding GST 18%</div>
+          </div>
+        </div>
+        <div class="info-box" style="margin-bottom:20px;">
+          <strong>Note:</strong> These are <strong>base premium</strong> rates. Add <strong>18% GST</strong> to get the final payable amount.
+          The bracket applied is determined by the <strong>oldest member's age</strong> in the group.
+        </div>
+        <div class="chart-section-title">Premium Rates by Age Bracket & Sum Insured</div>
+        <div class="tbl-wrap">
+          <table id="rateTable">
+            <thead>
+              <tr>
+                <th>Sum Insured</th>
+                <th class="bracket-head">0–25</th>
+                <th class="bracket-head">26–35</th>
+                <th class="bracket-head">36–45</th>
+                <th class="bracket-head">46–55</th>
+                <th class="bracket-head">56–65</th>
+                <th class="bracket-head">66–70</th>
+                <th class="bracket-head">71–75</th>
+                <th class="bracket-head">76–80</th>
+                <th class="bracket-head">Above 80</th>
+              </tr>
+            </thead>
+            <tbody id="rateBody"></tbody>
+          </table>
+        </div>
+        <div class="gst-note">* All figures in ₹ (Indian Rupees) · Exclusive of 18% GST · Bajaj Allianz Group Mediclaim</div>
+      </div>
+
+      <!-- GST Chart -->
+      <div class="card">
+        <div class="card-header">
+          <div class="icon-box">💡</div>
+          <div>
+            <div class="card-title">With GST (18%) — Final Premium</div>
+            <div class="card-sub">Total payable amount including 18% GST</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sum Insured</th>
+                <th class="bracket-head">0–25</th>
+                <th class="bracket-head">26–35</th>
+                <th class="bracket-head">36–45</th>
+                <th class="bracket-head">46–55</th>
+                <th class="bracket-head">56–65</th>
+                <th class="bracket-head">66–70</th>
+                <th class="bracket-head">71–75</th>
+                <th class="bracket-head">76–80</th>
+                <th class="bracket-head">Above 80</th>
+              </tr>
+            </thead>
+            <tbody id="gstBody"></tbody>
+          </table>
+        </div>
+        <div class="gst-note">* All figures in ₹ · Inclusive of 18% GST · Final payable per person</div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════ PANEL: MEMBERS ══════════════════════════════ -->
+    <div id="panel-members" class="panel fade2">
+      <div class="card">
+        <div class="card-header">
+          <div class="icon-box">👥</div>
+          <div>
+            <div class="card-title">Insured Member Directory</div>
+            <div class="card-sub">All employees covered under Bajaj Allianz Group Policy</div>
+          </div>
+        </div>
+
+        <!-- ☁️ UPLOAD & AUTO-SYNC -->
+        <div class="upload-panel">
+          <div class="upload-panel-head">
+            <div class="upload-panel-title">
+              ☁️ Upload Excel Files — Auto Sync to Cloud
+            </div>
+            <span class="sync-badge idle" id="syncBadge">
+              <span class="sync-dot"></span>
+              <span id="syncText">Ready</span>
+            </span>
+          </div>
+
+          <div class="file-slots">
+            <div class="file-slot" id="slot1" onclick="document.getElementById('xlIns').click()">
+              <span class="file-slot-icon">📋</span>
+              <span class="file-slot-name" id="slot1Name">Insurance_Data.xlsx</span>
+              <span class="file-slot-hint" id="slot1Hint">Click to select</span>
+            </div>
+            <div class="file-slot" id="slot2" onclick="document.getElementById('xlEmp').click()">
+              <span class="file-slot-icon">👤</span>
+              <span class="file-slot-name" id="slot2Name">Emp_Data.xlsx</span>
+              <span class="file-slot-hint" id="slot2Hint">Click to select</span>
+            </div>
+          </div>
+
+          <input type="file" id="xlIns" accept=".xlsx,.xls" onchange="fileSelected(this,'ins')"/>
+          <input type="file" id="xlEmp" accept=".xlsx,.xls" onchange="fileSelected(this,'emp')"/>
+
+          <button class="btn-upload" id="btnUpload" onclick="processImport()" disabled>
+            ⬆ Upload & Sync to Cloud
+          </button>
+          <div class="upload-msg" id="uploadMsg">Select Insurance_Data.xlsx and Emp_Data.xlsx above, then click Upload.</div>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" id="memberSearch" placeholder="🔍  Search by name, RHS code, department..." oninput="filterMembers()"/>
+          <select id="memberStatus" onchange="filterMembers()">
+            <option value="All">All Status</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="member-grid" id="memberGrid"></div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer fade5">
+      <div class="footer-brand">
+        <div class="footer-logomark">RHS</div>
+        <div style="text-align:left;">
+          <div class="footer-company"><em>Reliable</em> HR Solutions</div>
+          <div class="footer-dept">Human Resources Department</div>
+        </div>
+      </div>
+      <div class="footer-divider"></div>
+      <p class="footer-name">Gaurav Patil</p>
+      <p class="footer-role">HR Manager – Insurance & Operations · Reliable HR Solutions</p>
+      <div class="footer-contacts">
+        <a class="contact-pill" href="tel:8999299300">📞 8999299300</a>
+        <a class="contact-pill" href="mailto:rhsgaurav@gmail.com">✉️ rhsgaurav@gmail.com</a>
+      </div>
+      <p class="tagline">"Your health, our priority."</p>
+      <p class="design-credit">© 2025 Reliable HR Solutions · All employee benefits managed with care<br>
+        <strong>Designed &amp; Developed by Gaurav Patil</strong></p>
+    </div>
+
+  </div>
+</div>
+
+<!-- MEMBER DETAIL MODAL -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <div class="modal-head" id="modalHead">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div class="m-avatar" id="modalAvatar" style="width:56px;height:56px;border-radius:16px;font-size:22px;"></div>
+        <div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--white);" id="modalName"></div>
+          <div style="font-size:13px;color:var(--muted);margin-top:3px;" id="modalMeta"></div>
+          <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;" id="modalTags"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   CONFIG  — GitHub Gist (hardcoded, auto-sync)
+══════════════════════════════════════════════════ */
+const GH_TOKEN = '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';
+
+/* ══════════════════════════════════════════════════
+   PREMIUM DATA
+══════════════════════════════════════════════════ */
+const PREMIUMS = {
+  100000:  [1683,1868,2074,2302,2555,2888,3263,3687,4167],
+  150000:  [2000,2220,2464,2735,3036,3431,3877,4381,4950],
+  300000:  [3338,3706,4113,4566,5068,5727,6471,7312,8263],
+  500000:  [5253,5831,6472,7184,7974,9011,10182,11506,13002],
+  1000000: [8810,9779,10854,12048,13374,15112,17077,19297,21805]
+};
+const BRACKETS = ["0–25","26–35","36–45","46–55","56–65","66–70","71–75","76–80","Above 80"];
+const GST_RATE  = 0.18;
+let MEMBERS = [];
+
+/* ══════════════════════════════════════════════════
+   SYNC BADGE  — tiny status indicator only
+══════════════════════════════════════════════════ */
+function setSyncBadge(state, label){
+  const badge = document.getElementById('syncBadge');
+  const text  = document.getElementById('syncText');
+  if(!badge) return;
+  badge.className = 'sync-badge ' + state;
+  const dot = badge.querySelector('.sync-dot');
+  if(dot) dot.className = 'sync-dot' + (state==='saving'?' pulse':'');
+  if(text) text.textContent = label;
+}
+function setMsg(msg, type=''){
+  const el = document.getElementById('uploadMsg');
+  if(!el) return;
+  el.textContent = msg;
+  el.className = 'upload-msg' + (type?' '+type:'');
+}
+
+/* ══════════════════════════════════════════════════
+   FILE SELECTION
+══════════════════════════════════════════════════ */
+let staged = {ins:null, emp:null};
+
+function fileSelected(input, type){
+  const file = input.files[0];
+  if(!file) return;
+  staged[type] = file;
+  const isIns = type === 'ins';
+  document.getElementById(isIns ? 'slot1' : 'slot2').classList.add('loaded');
+  document.getElementById(isIns ? 'slot1Name' : 'slot2Name').textContent = '✓ ' + file.name;
+  document.getElementById(isIns ? 'slot1Hint' : 'slot2Hint').textContent = 'Ready';
+  document.getElementById('btnUpload').disabled = false;
+  const both = staged.ins && staged.emp;
+  setMsg(both
+    ? 'Both files ready — click Upload & Sync to Cloud.'
+    : (isIns ? 'Insurance file ready. Add Emp_Data.xlsx too (optional).' : 'Employee file ready. Add Insurance_Data.xlsx too (optional).')
+  );
+}
+
+/* ══════════════════════════════════════════════════
+   EXCEL HELPERS
+══════════════════════════════════════════════════ */
+function readXlsx(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = e => {
+      try{
+        const wb = XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const range = XLSX.utils.decode_range(ws['!ref']||'A1');
+        let hdr = range.s.r;
+        for(let row=range.s.r; row<=Math.min(range.s.r+5,range.e.r); row++){
+          const c0 = ws[XLSX.utils.encode_cell({r:row,c:0})];
+          if(c0&&typeof c0.v==='string'&&(c0.v.includes('Policy')||/^sr\.?no/i.test(c0.v)||c0.v.includes('Sr'))){hdr=row;break;}
+        }
+        res({name:file.name, rows:XLSX.utils.sheet_to_json(ws,{defval:'',range:hdr})});
+      }catch(e){rej(e);}
+    };
+    r.readAsArrayBuffer(file);
+  });
+}
+function col(row,...names){
+  for(const n of names){
+    const k=Object.keys(row).find(k=>k.trim().toLowerCase()===n.toLowerCase());
+    if(k!==undefined)return String(row[k]||'').trim();
+  }
+  return '';
+}
+function xlDate(v){
+  if(!v||isNaN(Number(v)))return String(v||'');
+  const d=new Date(Math.round((Number(v)-25569)*86400000));
+  return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+}
+function fmtSI(v){const n=Number(v);return(!n||isNaN(n))?String(v||'N/A'):'₹'+n.toLocaleString('en-IN');}
+function detectType(rows){
+  if(!rows.length)return null;
+  const keys=Object.keys(rows[0]).map(k=>k.toLowerCase());
+  if(keys.some(k=>k.includes('hat empcode')||k.includes('suminsured')||k.includes('id card no')))return 'ins';
+  if(keys.some(k=>k.includes('uan')||k.includes('aadhar')||k.includes('pran')))return 'emp';
+  return null;
+}
+function mergeData(insRows,empRows){
+  const insMap={};
+  insRows.forEach(r=>{
+    const code=col(r,'Hat Empcode','Co Empnumber').toUpperCase();
+    if(!code)return;
+    if(!insMap[code])insMap[code]=[];
+    insMap[code].push(r);
+  });
+  const empMap={};
+  empRows.forEach(r=>{const code=col(r,'Code').toUpperCase();if(code)empMap[code]=r;});
+  const out=[];
+  [...new Set([...Object.keys(insMap),...Object.keys(empMap)])].forEach(code=>{
+    const iList=insMap[code]||[], emp=empMap[code]||null;
+    const self=iList.find(r=>col(r,'Relation').toUpperCase()==='SELF')||iList[0]||null;
+    const name=(emp?col(emp,'Employee Name'):(self?col(self,'Member Name'):'')).trim();
+    if(!name)return;
+    const anyActive=iList.some(r=>col(r,'Member Status').toUpperCase()==='ACTIVE');
+    const status=iList.length?(anyActive?'Active':'Inactive'):'Active';
+    const covered=iList.filter(r=>col(r,'Member Status').toUpperCase()!=='LAPSED')
+      .map(r=>{const n=col(r,'Member Name'),rel=col(r,'Relation');return n?`${n} (${rel})`:null;}).filter(Boolean);
+    if(!covered.length)covered.push(`${name} (SELF)`);
+    const siRaw=self?col(self,'Suminsured'):'';
+    const rInc=self?self[Object.keys(self).find(k=>k.toLowerCase().includes('risk inc'))||'']||'':'';
+    const rExp=self?self[Object.keys(self).find(k=>k.toLowerCase().includes('risk expiry'))||'']||'':'';
+    out.push({
+      rhsCode:code, name,
+      dept:        emp?col(emp,'Branch','Grade'):'—',
+      designation: emp?col(emp,'Designation'):col(self||{},'Designation','Occupation')||'—',
+      email:       emp?col(emp,'Email'):col(self||{},'E Mail Id'),
+      phone:       emp?col(emp,'Mobile','Office Phone'):col(self||{},'Tel'),
+      dob:         emp?col(emp,'Birth Date'):xlDate(self?col(self,'Dob'):''),
+      joining:     emp?col(emp,'Join Date'):'',
+      gender:      emp?col(emp,'Gender'):col(self||{},'Gender'),
+      address:     self?col(self,'Address'):'',
+      location:    self?col(self,'Employee Location'):(emp?col(emp,'Branch'):''),
+      plan:        emp?col(emp,'Grade','Marital Status'):'Standard',
+      sumInsured:  fmtSI(siRaw), siNum:Number(siRaw)||0,
+      tpa:         'Bajaj Allianz / Medi Assist',
+      policyNo:    self?col(self,'Policy No'):'OG-26-2025-8403-00000044',
+      validity:    (rInc&&rExp)?`${xlDate(rInc)} – ${xlDate(rExp)}`:'01 Apr 2025 – 31 Mar 2026',
+      idCard:      self?col(self,'Id Card No'):'',
+      status, members:covered
+    });
+  });
+  out.sort((a,b)=>(parseInt(a.rhsCode.replace(/\D/g,''))||0)-(parseInt(b.rhsCode.replace(/\D/g,''))||0));
+  return out;
+}
+
+/* ══════════════════════════════════════════════════
+   GITHUB GIST CLOUD  — unlimited size, free forever
+   Token & Gist ID stored silently in localStorage
+══════════════════════════════════════════════════ */
+const GIST_API   = 'https://api.github.com/gists';
+
+const LS_GIST    = 'rhs_gist_id';
+const LS_CACHE   = 'rhs_members_cache';
+
+function getToken(){ return GH_TOKEN; }
+function getGistId(){ return localStorage.getItem(LS_GIST) || ''; }
+function saveGistId(id){ localStorage.setItem(LS_GIST, id); }
+
+/* ── SAVE to GitHub Gist (create or update) ── */
+async function cloudSave(data){
+  const token = getToken();
+  const payload = {
+    description: 'RHS Insurance Portal — Member Data',
+    public: false,
+    files: {
+      'rhs-members.json': {
+        content: JSON.stringify({
+          members: data,
+          meta: { updated: new Date().toISOString(), count: data.length }
+        })
+      }
+    }
+  };
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token,
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+
+  const existingId = getGistId();
+  if(existingId){
+    // Update existing gist
+    const r = await fetch(`${GIST_API}/${existingId}`, {
+      method: 'PATCH', headers, body: JSON.stringify(payload)
+    });
+    if(r.ok){ const j=await r.json(); saveGistId(j.id); return j.id; }
+    if(r.status===404){
+      // Gist deleted — create new
+      localStorage.removeItem(LS_GIST);
+      return await gistCreate(headers, payload);
+    }
+    const err = await r.json().catch(()=>({message:r.status}));
+    throw new Error('GitHub save failed: ' + (err.message||r.status));
+  }
+  return await gistCreate(headers, payload);
+}
+
+async function gistCreate(headers, payload){
+  const r = await fetch(GIST_API, { method:'POST', headers, body:JSON.stringify(payload) });
+  if(!r.ok){
+    const err = await r.json().catch(()=>({message:r.status}));
+    if(r.status===401) throw new Error('Invalid GitHub token. Create a new one at github.com/settings/tokens');
+    if(r.status===403) throw new Error('GitHub token lacks "gist" permission. Regenerate with gist scope.');
+    throw new Error('GitHub create failed: '+(err.message||r.status));
+  }
+  const j = await r.json();
+  saveGistId(j.id);
+  return j.id;
+}
+
+/* ── LOAD from GitHub Gist ── */
+async function cloudLoad(gistId){
+  const token = getToken();
+  const headers = token
+    ? { 'Authorization':'Bearer '+token, 'X-GitHub-Api-Version':'2022-11-28' }
+    : { 'X-GitHub-Api-Version':'2022-11-28' };
+
+  const r = await fetch(`${GIST_API}/${gistId}`, { headers });
+  if(!r.ok){
+    if(r.status===404) throw new Error('Gist not found. Upload files to create it.');
+    throw new Error('Load failed ('+r.status+')');
+  }
+  const gist = await r.json();
+  const file = gist.files['rhs-members.json'];
+  if(!file) throw new Error('Data file missing in gist.');
+
+  // Fetch raw content (handles truncated large files)
+  let content = file.content;
+  if(file.truncated){
+    const raw = await fetch(file.raw_url);
+    content = await raw.text();
+  }
+  const data = JSON.parse(content);
+  if(!data?.members?.length) throw new Error('No member data found.');
+  return data.members;
+}
+
+/* ══════════════════════════════════════════════════
+   PROCESS IMPORT
+══════════════════════════════════════════════════ */
+async function processImport(){
+  if(!staged.ins && !staged.emp){ setMsg('Please select at least one file.','err'); return; }
+  const btn = document.getElementById('btnUpload');
+  btn.disabled=true; btn.textContent='⏳ Reading…';
+  setSyncBadge('saving','Saving…');
+
+  try{
+    // 1. Read files
+    setMsg('Reading Excel files…','saving');
+    const reads=[];
+    if(staged.ins) reads.push(readXlsx(staged.ins));
+    if(staged.emp) reads.push(readXlsx(staged.emp));
+    const results = await Promise.all(reads);
+
+    // 2. Detect & merge
+    let insRows=[], empRows=[];
+    results.forEach(({name,rows})=>{
+      const t=detectType(rows);
+      if(t==='ins') insRows=rows;
+      else if(t==='emp') empRows=rows;
+      else { if(name.toLowerCase().includes('ins')) insRows=rows; else empRows=rows; }
+    });
+    setMsg('Merging data…','saving');
+    const merged = mergeData(insRows, empRows);
+    if(!merged.length) throw new Error('No valid records found. Check column headers.');
+
+    // 3. Show immediately
+    MEMBERS.length=0; merged.forEach(m=>MEMBERS.push(m)); filterMembers();
+
+    // 4. Local cache
+    try{ localStorage.setItem(LS_CACHE, JSON.stringify({members:merged, updated:new Date().toISOString()})); }catch(e){}
+
+    // 5. Save to GitHub Gist
+    setMsg('Syncing to GitHub Gist…','saving');
+    btn.textContent='⏳ Syncing…';
+    const gistId = await cloudSave(merged);
+
+    setSyncBadge('synced','Synced ✓');
+    setMsg('✅ '+merged.length+' employees saved to GitHub Gist. Loads automatically on any device.','ok');
+
+  } catch(err){
+    setSyncBadge('error','Error');
+    setMsg('✕ '+err.message,'err');
+  } finally{
+    btn.disabled=false; btn.textContent='⬆ Upload & Sync to Cloud';
+    staged={ins:null,emp:null};
+    document.getElementById('xlIns').value='';
+    document.getElementById('xlEmp').value='';
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   AUTO-LOAD on every page open
+══════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', async function(){
+  const gistId = getGistId();
+  if(gistId){
+    setSyncBadge('saving','Loading…');
+    try{
+      const members = await cloudLoad(gistId);
+      MEMBERS.length=0; members.forEach(m=>MEMBERS.push(m));
+      renderMembers(MEMBERS); filterMembers();
+      setSyncBadge('synced','Synced ✓');
+      setMsg('✅ '+members.length+' employees loaded from cloud.','ok');
+      return;
+    }catch(e){
+      setSyncBadge('error','Cloud error');
+      // Fall through to cache
+    }
+  }
+
+  // Local cache fallback
+  try{
+    const raw = localStorage.getItem(LS_CACHE);
+    if(raw){
+      const data = JSON.parse(raw);
+      if(data?.members?.length){
+        MEMBERS.length=0; data.members.forEach(m=>MEMBERS.push(m));
+        renderMembers(MEMBERS); filterMembers();
+        setSyncBadge('idle','Local cache');
+        setMsg('Showing cached data. Upload to re-sync.','');
+        return;
+      }
+    }
+  }catch(e){}
+
+  setSyncBadge('idle','Ready');
+  setMsg('Select Insurance_Data.xlsx + Emp_Data.xlsx to upload.');
+});
+
+/* ══════════════════════════════════════════════════
+   PANEL NAVIGATION
+══════════════════════════════════════════════════ */
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>{
+    t.classList.toggle('active',t.textContent.toLowerCase().includes(id==='calculator'?'calc':id==='chart'?'rate':id));
+    if(t.classList.contains('active')){t.style.background='rgba(201,168,76,0.18)';t.style.color='var(--gold3)';t.style.border='1px solid rgba(201,168,76,0.3)';}
+    else{t.style.background='';t.style.color='';t.style.border='';}
+  });
+}
+
+/* ══════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════ */
+function fmt(n){return Math.round(n).toLocaleString('en-IN');}
+function fmtR(n){return '₹'+fmt(n);}
+function getAgeIdx(age){
+  if(age<=25)return 0;if(age<=35)return 1;if(age<=45)return 2;
+  if(age<=55)return 3;if(age<=65)return 4;if(age<=70)return 5;
+  if(age<=75)return 6;if(age<=80)return 7;return 8;
+}
+
+/* ══════════════════════════════════════════════════
+   RATE CHART
+══════════════════════════════════════════════════ */
+const SI_LABELS={100000:'₹1,00,000',150000:'₹1,50,000',300000:'₹3,00,000',500000:'₹5,00,000',1000000:'₹10,00,000'};
+function buildRateChart(){
+  const base=document.getElementById('rateBody'), gst=document.getElementById('gstBody');
+  base.innerHTML=''; gst.innerHTML='';
+  for(const [si,rates] of Object.entries(PREMIUMS)){
+    let r1=`<tr class="chart-row"><td><span class="si-label">${SI_LABELS[si]}</span></td>`;
+    let r2=`<tr class="chart-row"><td><span class="si-label">${SI_LABELS[si]}</span></td>`;
+    rates.forEach(v=>{r1+=`<td class="num-cell">${fmtR(v)}</td>`;r2+=`<td class="num-cell">${fmtR(Math.round(v*1.18))}</td>`;});
+    base.innerHTML+=r1+'</tr>'; gst.innerHTML+=r2+'</tr>';
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   PREMIUM CALCULATOR
+══════════════════════════════════════════════════ */
+let calcMembers=[], nextId=1;
+function addMember(){
+  const name=document.getElementById('iName').value.trim();
+  const age=parseInt(document.getElementById('iAge').value);
+  const si=parseInt(document.getElementById('iSI').value);
+  if(!name){alert('Please enter employee name.');return;}
+  if(isNaN(age)||age<0||age>120){alert('Please enter a valid age (0–120).');return;}
+  calcMembers.push({id:nextId++,name,age,si});
+  document.getElementById('iName').value='';
+  document.getElementById('iAge').value='';
+  render();
+}
+function removeMember(id){calcMembers=calcMembers.filter(m=>m.id!==id);render();}
+function render(){
+  const el=document.getElementById('results');
+  if(!calcMembers.length){
+    el.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div><p>No members added yet.<br>Enter employee details above to begin calculating premiums.</p></div>`;
+    return;
+  }
+  const maxAge=Math.max(...calcMembers.map(m=>m.age));
+  const gIdx=getAgeIdx(maxAge), gBrkt=BRACKETS[gIdx];
+  const oldest=calcMembers.filter(m=>m.age===maxAge).map(m=>m.name).join(', ');
+  let totBase=0,totGst=0,totPrem=0;
+  const rows=calcMembers.map(m=>{
+    const base=PREMIUMS[m.si][gIdx], gst=Math.round(base*GST_RATE), tot=base+gst;
+    totBase+=base; totGst+=gst; totPrem+=tot;
+    return{...m,base,gst,tot};
+  });
+  el.innerHTML=`
+    <div class="bracket-banner"><span>🏷️</span><span>Group age bracket applied:</span>
+    <span class="bracket-pill">${gBrkt}</span>
+    <span style="color:var(--muted);font-size:12px;">oldest age <strong style="color:var(--gold3);">${maxAge}</strong> (${oldest})</span></div>
+    <div class="metrics-row">
+      <div class="metric-card"><div class="metric-label">Total Members</div><div class="metric-value">${calcMembers.length}</div></div>
+      <div class="metric-card"><div class="metric-label">Oldest Age · Bracket</div><div class="metric-value">${maxAge}</div><div class="metric-sub">${gBrkt}</div></div>
+      <div class="metric-card"><div class="metric-label">Base Premium</div><div class="metric-value" style="font-size:20px;">${fmtR(totBase)}</div><div class="metric-sub">excl. GST</div></div>
+      <div class="metric-card highlight"><div class="metric-label">Grand Total (incl. GST)</div><div class="metric-value" style="font-size:20px;">${fmtR(totPrem)}</div><div class="metric-sub">incl. 18% GST</div></div>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>#</th><th style="text-align:left;">Name</th><th>Age</th><th>Sum Insured</th><th>Bracket</th><th class="num-cell">Base</th><th class="num-cell">GST 18%</th><th class="num-cell">Total</th><th></th></tr></thead>
+      <tbody>${rows.map((r,i)=>`<tr class="data-row">
+        <td style="color:var(--muted);font-size:12px;">${String(i+1).padStart(2,'0')}</td>
+        <td style="text-align:left;color:var(--white);font-weight:500;">${r.name}${r.age===maxAge?'<span class="oldest-star">★</span>':''}</td>
+        <td style="text-align:right;">${r.age}</td><td style="text-align:right;">${fmtR(r.si)}</td>
+        <td style="text-align:right;"><span class="age-badge">${gBrkt}</span></td>
+        <td class="num-cell">${fmtR(r.base)}</td><td class="num-cell gst-val">${fmtR(r.gst)}</td>
+        <td class="num-cell total-val">${fmtR(r.tot)}</td>
+        <td><button class="btn-rm" onclick="removeMember(${r.id})">× Remove</button></td>
+      </tr>`).join('')}
+      <tr class="total-row"><td colspan="5">Total — ${calcMembers.length} member${calcMembers.length>1?'s':''}</td>
+        <td class="num-cell">${fmtR(totBase)}</td><td class="num-cell gst-val">${fmtR(totGst)}</td>
+        <td class="num-cell grand">${fmtR(totPrem)}</td><td></td></tr>
+      </tbody></table></div>`;
+}
+
+/* ══════════════════════════════════════════════════
+   MEMBERS DIRECTORY
+══════════════════════════════════════════════════ */
+function renderMembers(list){
+  const grid=document.getElementById('memberGrid');
+  if(!list||!list.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">☁️</div>
+      <p>No data loaded yet.<br>Upload Excel files or click "Load from Cloud".</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML=list.map(m=>`
+    <div class="member-card" onclick='openModal(${JSON.stringify(m).replace(/'/g,"&#39;")})'>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+        <div class="m-avatar">${m.name.charAt(0)}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="m-name">${m.name}</div>
+          <div class="m-meta">${m.designation||'—'} · ${m.dept||'—'}</div>
+          <div class="m-rhs">${m.rhsCode}</div>
+        </div>
+        <span class="m-status ${m.status==='Active'?'status-active':'status-inactive'}">${m.status}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid rgba(255,255,255,0.06);font-size:12px;">
+        <span style="color:var(--muted);">SI: <span style="color:#34d399;">${m.sumInsured||'N/A'}</span></span>
+        <span style="color:var(--muted);">👥 ${m.members?m.members.length:1} covered</span>
+      </div>
+      ${m.idCard?`<div style="margin-top:6px;font-size:11px;color:var(--muted);">🪪 ${m.idCard}</div>`:''}
+    </div>`).join('');
+}
+
+function filterMembers(){
+  const q=document.getElementById('memberSearch').value.toLowerCase();
+  const st=document.getElementById('memberStatus').value;
+  const f=MEMBERS.filter(m=>(st==='All'||m.status===st)&&
+    (m.name.toLowerCase().includes(q)||(m.rhsCode||'').toLowerCase().includes(q)||
+     (m.dept||'').toLowerCase().includes(q)||(m.designation||'').toLowerCase().includes(q)||
+     (m.idCard||'').toLowerCase().includes(q)||(m.email||'').toLowerCase().includes(q)));
+  renderMembers(f);
+}
+
+/* ══════════════════════════════════════════════════
+   MODAL
+══════════════════════════════════════════════════ */
+function openModal(m){
+  document.getElementById('modalAvatar').textContent=m.name.charAt(0);
+  document.getElementById('modalName').textContent=m.name;
+  document.getElementById('modalMeta').textContent=`${m.designation||'—'} · ${m.dept||'—'}`;
+  document.getElementById('modalTags').innerHTML=`
+    <span style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);color:var(--gold3);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;">${m.rhsCode}</span>
+    <span style="background:${m.status==='Active'?'rgba(16,185,129,0.15)':'rgba(239,68,68,0.12)'};border:1px solid ${m.status==='Active'?'rgba(16,185,129,0.3)':'rgba(239,68,68,0.25)'};color:${m.status==='Active'?'#34d399':'#f87171'};border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;">${m.status}</span>
+    ${m.gender?`<span style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--muted);border-radius:20px;padding:3px 12px;font-size:11px;">${m.gender}</span>`:''}`;
+  document.getElementById('modalBody').innerHTML=`
+    <div class="detail-section">
+      <div class="detail-section-title">📞 Contact</div>
+      <div class="detail-rows">
+        <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">${m.phone||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val">${m.email||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Address</span><span class="detail-val">${m.address||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Location</span><span class="detail-val">${m.location||m.dept||'—'}</span></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">👤 Personal</div>
+      <div class="detail-rows">
+        <div class="detail-row"><span class="detail-key">Date of Birth</span><span class="detail-val">${m.dob||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Joining Date</span><span class="detail-val">${m.joining||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Grade / Plan</span><span class="detail-val">${m.plan||'—'}</span></div>
+      </div>
+    </div>
+    <div class="detail-section">
+      <div class="detail-section-title">🛡️ Insurance</div>
+      <div class="detail-rows">
+        <div class="detail-row"><span class="detail-key">RHS Code</span><span class="detail-val" style="color:var(--gold3);font-weight:700;">${m.rhsCode}</span></div>
+        <div class="detail-row"><span class="detail-key">ID Card No</span><span class="detail-val" style="color:var(--gold3);">${m.idCard||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Sum Insured</span><span class="detail-val" style="color:#34d399;">${m.sumInsured||'N/A'}</span></div>
+        <div class="detail-row"><span class="detail-key">TPA</span><span class="detail-val">${m.tpa||'Bajaj Allianz'}</span></div>
+        <div class="detail-row"><span class="detail-key">Policy No</span><span class="detail-val">${m.policyNo||'—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Validity</span><span class="detail-val">${m.validity||'—'}</span></div>
+      </div>
+    </div>
+    <div class="detail-section" style="margin-bottom:0;">
+      <div class="detail-section-title">👨‍👩‍👧 Covered Members (${(m.members||[]).length})</div>
+      <div class="members-list">${(m.members||[`${m.name} (SELF)`]).map(mb=>`<div class="member-pill">${mb}</div>`).join('')}</div>
+    </div>`;
+  document.getElementById('memberModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){document.getElementById('memberModal').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('memberModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&(e.target.id==='iName'||e.target.id==='iAge'))addMember();
+  if(e.key==='Escape')closeModal();
+});
+
+/* ── INIT ── */
+buildRateChart();
+renderMembers(MEMBERS);
+render();
+</script>
+</body>
+</html>
