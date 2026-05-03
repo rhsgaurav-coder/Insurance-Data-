@@ -285,18 +285,98 @@ tr.chart-row:hover td{background:rgba(201,168,76,0.05);}
 .upload-msg{font-size:11.5px;color:var(--muted);margin-top:10px;text-align:center;line-height:1.6;}
 .upload-msg.ok{color:#34d399;} .upload-msg.err{color:#f87171;} .upload-msg.saving{color:var(--gold3);}
 #xlIns,#xlEmp{display:none;}
-/* ── RESPONSIVE ── */
-@media(max-width:720px){
-  .form-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;}
-  .btn-add{grid-column:1/-1;}
-  .metrics-row{grid-template-columns:1fr 1fr;}
-  .member-grid{grid-template-columns:1fr;}
-  .hero{padding:38px 20px 34px;}
-  .card{padding:22px 18px;}
-  .wrap{padding:0 14px 60px;}
+/* ── RESPONSIVE — MOBILE FIRST ── */
+@media(max-width:768px){
+  /* Layout */
+  .wrap{padding:0 10px 80px;}
+  .card{padding:18px 14px;border-radius:16px;}
+  .hero{padding:30px 16px 28px;}
+  .footer{padding:22px 14px;}
+
+  /* Navbar */
+  .rhs-nav-inner{padding:0 12px;}
+  .rhs-logotype-sub{display:none;}
   .nav-tabs{display:none;}
-  .footer{padding:26px 18px;}
+  .nav-right-label{display:none;}
+
+  /* Mobile bottom tab bar */
+  .mobile-tabs{display:flex !important;}
+
+  /* Hero text */
+  .hero-title{font-size:clamp(28px,8vw,44px);}
+  .hero-sub{font-size:clamp(20px,6vw,32px);}
+  .hero-desc{font-size:13px;}
+  .hero-badges{flex-wrap:wrap;gap:8px;justify-content:center;}
+  .hero-badge{font-size:10px;padding:6px 12px;}
+
+  /* Calculator form */
+  .form-grid{grid-template-columns:1fr 1fr;gap:8px;}
+  .btn-add{grid-column:1/-1;height:44px;}
+  .form-group label{font-size:11px;}
+
+  /* Metrics */
+  .metrics-row{grid-template-columns:1fr 1fr;gap:8px;}
+  .metric-card{padding:14px 12px;}
+  .metric-value{font-size:18px !important;}
+
+  /* Table */
+  .tbl-wrap{border-radius:12px;}
+  table{font-size:12px;}
+  th,td{padding:10px 8px;}
+  .btn-rm{font-size:10px;padding:3px 8px;}
+
+  /* Rate chart */
+  .chart-tab-row{flex-wrap:wrap;gap:6px;}
+
+  /* Members */
+  .member-grid{grid-template-columns:1fr;}
+  .search-bar{flex-direction:column;gap:8px;}
+  .search-bar input,.search-bar select{width:100%;height:44px;}
+  .file-slots{grid-template-columns:1fr 1fr;gap:8px;}
+  .file-slot{padding:12px 8px;}
+  .file-slot-icon{font-size:18px;}
+  .file-slot-name{font-size:11px;}
+  .btn-upload{height:48px;font-size:14px;}
+  .upload-panel{padding:14px;}
+  .upload-panel-head{flex-direction:column;align-items:flex-start;gap:6px;}
+
+  /* Modal */
+  .modal-box{padding:20px 16px;border-radius:16px;}
+  .modal-head{padding:20px 16px;}
+  .modal-body{padding:16px;}
+  .detail-rows{gap:10px;}
+  .members-list{gap:6px;}
+  .member-pill{font-size:11px;padding:5px 10px;}
+
+  /* Card headers */
+  .card-header{gap:10px;}
+  .icon-box{width:36px;height:36px;font-size:16px;}
+  .card-title{font-size:15px;}
 }
+
+@media(max-width:400px){
+  .form-grid{grid-template-columns:1fr;}
+  .metrics-row{grid-template-columns:1fr;}
+  .file-slots{grid-template-columns:1fr;}
+}
+
+/* Mobile bottom tab bar */
+.mobile-tabs{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(10,22,40,0.97);
+  border-top:1px solid rgba(201,168,76,0.2);
+  backdrop-filter:blur(16px);
+  padding:8px 0 max(8px,env(safe-area-inset-bottom));
+  justify-content:space-around;align-items:center;
+}
+.mob-tab{display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;padding:4px 16px;
+  color:var(--muted);font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:0.3px;transition:color .2s;min-width:64px;}
+.mob-tab-icon{font-size:20px;line-height:1;}
+.mob-tab.active{color:var(--gold3);}
+.mob-tab.active .mob-tab-icon{filter:drop-shadow(0 0 6px rgba(201,168,76,0.6));}
 </style>
 </head>
 <body>
@@ -583,11 +663,6 @@ tr.chart-row:hover td{background:rgba(201,168,76,0.05);}
 
 <script>
 /* ══════════════════════════════════════════════════
-   CONFIG  — GitHub Gist (hardcoded, auto-sync)
-══════════════════════════════════════════════════ */
-const GH_TOKEN = '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';
-
-/* ══════════════════════════════════════════════════
    PREMIUM DATA
 ══════════════════════════════════════════════════ */
 const PREMIUMS = {
@@ -732,96 +807,86 @@ function mergeData(insRows,empRows){
 }
 
 /* ══════════════════════════════════════════════════
-   GITHUB GIST CLOUD  — unlimited size, free forever
-   Token & Gist ID stored silently in localStorage
+   GITHUB REPO STORAGE
+   Repo  : rhsgaurav-coder/Insurance-Data-
+   Read  : raw.githubusercontent.com  (no token, public)
+   Write : GitHub Contents API        (token required)
+   File  : members-data.json
 ══════════════════════════════════════════════════ */
-const GIST_API   = 'https://api.github.com/gists';
-
-const LS_GIST    = 'rhs_gist_id';
-const LS_CACHE   = 'rhs_members_cache';
+const GH_TOKEN    = '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';
+const GH_OWNER    = 'rhsgaurav-coder';
+const GH_REPO     = 'Insurance-Data-';
+const GH_FILE     = 'members-data.json';
+const GH_BRANCH   = 'main';
+const GH_RAW_URL  = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/${GH_BRANCH}/${GH_FILE}`;
+const GH_API_URL  = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
+const LS_CACHE    = 'rhs_members_cache';
+const LS_SHA      = 'rhs_file_sha'; // needed for GitHub file update
 
 function getToken(){ return GH_TOKEN; }
-function getGistId(){ return localStorage.getItem(LS_GIST) || ''; }
-function saveGistId(id){ localStorage.setItem(LS_GIST, id); }
 
-/* ── SAVE to GitHub Gist (create or update) ── */
+/* ── READ from public raw URL (no token needed) ── */
+async function cloudLoad(){
+  // Add cache-busting so we always get latest
+  const r = await fetch(GH_RAW_URL + '?t=' + Date.now());
+  if(r.status === 404) throw new Error('Data file not found. Upload Excel files first.');
+  if(!r.ok) throw new Error('Load failed ('+r.status+')');
+  const data = await r.json();
+  if(!data?.members?.length) throw new Error('No member data in file.');
+  // Cache the SHA for future writes
+  if(data.sha) localStorage.setItem(LS_SHA, data.sha);
+  return data.members;
+}
+
+/* ── GET current file SHA (needed to update) ── */
+async function getFileSha(){
+  // Try cached SHA first (saves an API call)
+  const cached = localStorage.getItem(LS_SHA);
+  if(cached) return cached;
+  const r = await fetch(GH_API_URL, {
+    headers:{ 'Authorization':'Bearer '+getToken(), 'X-GitHub-Api-Version':'2022-11-28' }
+  });
+  if(r.status === 404) return null; // file doesn't exist yet
+  if(!r.ok) throw new Error('GitHub API error: '+r.status);
+  const j = await r.json();
+  return j.sha || null;
+}
+
+/* ── WRITE to GitHub repo via Contents API ── */
 async function cloudSave(data){
   const token = getToken();
-  const payload = {
-    description: 'RHS Insurance Portal — Member Data',
-    public: false,
-    files: {
-      'rhs-members.json': {
-        content: JSON.stringify({
-          members: data,
-          meta: { updated: new Date().toISOString(), count: data.length }
-        })
-      }
-    }
+  const payload = { members:data, meta:{ updated:new Date().toISOString(), count:data.length } };
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+
+  const sha = await getFileSha();
+  const body = {
+    message: `Update insurance data — ${data.length} members [${new Date().toLocaleDateString('en-IN')}]`,
+    content,
+    branch: GH_BRANCH,
+    ...(sha ? {sha} : {})
   };
 
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + token,
-    'X-GitHub-Api-Version': '2022-11-28'
-  };
+  const r = await fetch(GH_API_URL, {
+    method: 'PUT',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+token,
+      'X-GitHub-Api-Version':'2022-11-28'
+    },
+    body: JSON.stringify(body)
+  });
 
-  const existingId = getGistId();
-  if(existingId){
-    // Update existing gist
-    const r = await fetch(`${GIST_API}/${existingId}`, {
-      method: 'PATCH', headers, body: JSON.stringify(payload)
-    });
-    if(r.ok){ const j=await r.json(); saveGistId(j.id); return j.id; }
-    if(r.status===404){
-      // Gist deleted — create new
-      localStorage.removeItem(LS_GIST);
-      return await gistCreate(headers, payload);
-    }
-    const err = await r.json().catch(()=>({message:r.status}));
-    throw new Error('GitHub save failed: ' + (err.message||r.status));
-  }
-  return await gistCreate(headers, payload);
-}
-
-async function gistCreate(headers, payload){
-  const r = await fetch(GIST_API, { method:'POST', headers, body:JSON.stringify(payload) });
   if(!r.ok){
-    const err = await r.json().catch(()=>({message:r.status}));
-    if(r.status===401) throw new Error('Invalid GitHub token. Create a new one at github.com/settings/tokens');
-    if(r.status===403) throw new Error('GitHub token lacks "gist" permission. Regenerate with gist scope.');
-    throw new Error('GitHub create failed: '+(err.message||r.status));
+    const err = await r.json().catch(()=>({}));
+    if(r.status===401||r.status===403){
+      throw new Error('GitHub token expired or invalid. Please update the token in the portal.');
+    }
+    if(r.status===422) throw new Error('File conflict. Refreshing SHA — please try upload again.');
+    throw new Error('GitHub save failed ('+r.status+'): '+(err.message||'Unknown error'));
   }
   const j = await r.json();
-  saveGistId(j.id);
-  return j.id;
-}
-
-/* ── LOAD from GitHub Gist ── */
-async function cloudLoad(gistId){
-  const token = getToken();
-  const headers = token
-    ? { 'Authorization':'Bearer '+token, 'X-GitHub-Api-Version':'2022-11-28' }
-    : { 'X-GitHub-Api-Version':'2022-11-28' };
-
-  const r = await fetch(`${GIST_API}/${gistId}`, { headers });
-  if(!r.ok){
-    if(r.status===404) throw new Error('Gist not found. Upload files to create it.');
-    throw new Error('Load failed ('+r.status+')');
-  }
-  const gist = await r.json();
-  const file = gist.files['rhs-members.json'];
-  if(!file) throw new Error('Data file missing in gist.');
-
-  // Fetch raw content (handles truncated large files)
-  let content = file.content;
-  if(file.truncated){
-    const raw = await fetch(file.raw_url);
-    content = await raw.text();
-  }
-  const data = JSON.parse(content);
-  if(!data?.members?.length) throw new Error('No member data found.');
-  return data.members;
+  // Cache new SHA
+  if(j.content?.sha) localStorage.setItem(LS_SHA, j.content.sha);
 }
 
 /* ══════════════════════════════════════════════════
@@ -862,10 +927,10 @@ async function processImport(){
     // 5. Save to GitHub Gist
     setMsg('Syncing to GitHub Gist…','saving');
     btn.textContent='⏳ Syncing…';
-    const gistId = await cloudSave(merged);
+    await cloudSave(merged);
 
     setSyncBadge('synced','Synced ✓');
-    setMsg('✅ '+merged.length+' employees saved to GitHub Gist. Loads automatically on any device.','ok');
+    setMsg('✅ '+merged.length+' employees saved & committed to GitHub. Loads on any device automatically.','ok');
 
   } catch(err){
     setSyncBadge('error','Error');
@@ -882,11 +947,9 @@ async function processImport(){
    AUTO-LOAD on every page open
 ══════════════════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', async function(){
-  const gistId = getGistId();
-  if(gistId){
     setSyncBadge('saving','Loading…');
     try{
-      const members = await cloudLoad(gistId);
+      const members = await cloudLoad();
       MEMBERS.length=0; members.forEach(m=>MEMBERS.push(m));
       renderMembers(MEMBERS); filterMembers();
       setSyncBadge('synced','Synced ✓');
@@ -896,7 +959,6 @@ window.addEventListener('DOMContentLoaded', async function(){
       setSyncBadge('error','Cloud error');
       // Fall through to cache
     }
-  }
 
   // Local cache fallback
   try{
@@ -927,6 +989,15 @@ function showPanel(id){
     t.classList.toggle('active',t.textContent.toLowerCase().includes(id==='calculator'?'calc':id==='chart'?'rate':id));
     if(t.classList.contains('active')){t.style.background='rgba(201,168,76,0.18)';t.style.color='var(--gold3)';t.style.border='1px solid rgba(201,168,76,0.3)';}
     else{t.style.background='';t.style.color='';t.style.border='';}
+  });
+  // Sync mobile tab bar
+  const map={calculator:'mobCalc',chart:'mobChart',members:'mobMembers'};
+  if(map[id]) setMobTab(map[id]);
+}
+function setMobTab(activeId){
+  ['mobCalc','mobChart','mobMembers'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.className='mob-tab'+(id===activeId?' active':'');
   });
 }
 
@@ -1114,5 +1185,17 @@ buildRateChart();
 renderMembers(MEMBERS);
 render();
 </script>
+<!-- ── MOBILE BOTTOM TAB BAR ── -->
+<div class="mobile-tabs" id="mobileTabs">
+  <button class="mob-tab active" id="mobCalc" onclick="showPanel('calculator');setMobTab('mobCalc')">
+    <span class="mob-tab-icon">🧮</span>Calculator
+  </button>
+  <button class="mob-tab" id="mobChart" onclick="showPanel('chart');setMobTab('mobChart')">
+    <span class="mob-tab-icon">📊</span>Rate Chart
+  </button>
+  <button class="mob-tab" id="mobMembers" onclick="showPanel('members');setMobTab('mobMembers')">
+    <span class="mob-tab-icon">👥</span>Members
+  </button>
+</div>
 </body>
 </html>
